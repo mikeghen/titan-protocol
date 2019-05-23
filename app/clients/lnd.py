@@ -1,21 +1,45 @@
-from lndgrpc import LNDClient
+import os
+import binascii
+import grpc
+from . import rpc_pb2, rpc_pb2_grpc
 
-# pass in the ip-address with RPC port and network ('mainnet', 'testnet', 'simnet')
-# the client defaults to 127.0.0.1:10009 and mainnet if no args provided
+lnd = rpc_pb2
+lndrpc = rpc_pb2_grpc
 
-print('Listening for invoices...')
-for invoice in lnd.subscribe_invoices():
-    print(invoice)
+# TODO: Read only, Admin, etc.
+MACAROON_FILEPATH = '/mnt/data/sparkswap/shared/lnd-engine-admin-ltc.macaroon'
+TLS_FILEPATH = '/mnt/data/sparkswap/shared/lnd-engine-tls-ltc.cert'
+os.environ["GRPC_SSL_CIPHER_SUITES"] = 'HIGH+ECDSA'
 
 
-class Lnd:
+class MacaroonMetadataPlugin(grpc.AuthMetadataPlugin):
+    """Metadata plugin to include macaroon in metadata of each RPC request"""
+
+    def __init__(self, macaroon):
+        self.macaroon = macaroon
+
+    def __call__(self, context, callback):
+        callback([('macaroon', self.macaroon)], None)
+
+
+class LndLTC:
 
     def __init__(self):
-        self.client = LNDClient("localhost:10113", network='mainnet')
+        cert = open(TLS_FILEPATH, 'rb')
+        macaroon = binascii.hexlify(open(MACAROON_FILEPATH, 'rb').read()).decode
+
+        cert_creds = grpc.ssl_channel_credentials(cert)
+        metadata_plugin = MacaroonMetadataPlugin(macaroon)
+        auth_creds = grpc.metadata_call_credentials(metadata_plugin)
+        self._creds = grpc.composite_channel_credentials(cert_creds, auth_creds)
+        self.channel = grpcsecure_channel(
+            'localhost', self._creds, options=[('grpc.max_receive_message_length', 1024*1024*50)]
+        )
+        self.lnd_stub = lnrpc.LightningStub(channel)
 
 
     def healthcheck(self):
-        self.client.get_info()
+        return self.lnd_stub.GetInfo(ln.GetInfoRequest())
 
 
     def open_channel(self, address, amount):
