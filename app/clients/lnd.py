@@ -32,10 +32,10 @@ class LndLTC:
         metadata_plugin = MacaroonMetadataPlugin(macaroon)
         auth_creds = grpc.metadata_call_credentials(metadata_plugin)
         self._creds = grpc.composite_channel_credentials(cert_creds, auth_creds)
-        self.channel = grpc.secure_channel(
+        self._channel = grpc.secure_channel(
             'localhost', self._creds, options=[('grpc.max_receive_message_length', 1024*1024*50)]
         )
-        self.lnd_stub = lndrpc.LightningStub(channel)
+        self.lnd_stub = lndrpc.LightningStub(self._channel)
 
 
     def healthcheck(self):
