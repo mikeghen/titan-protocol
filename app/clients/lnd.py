@@ -39,7 +39,7 @@ class LndLTC:
 
 
     def healthcheck(self):
-        return self.lnd_stub.GetInfo(ln.GetInfoRequest())
+        return self.lnd_stub.GetInfo(lnd.GetInfoRequest())
 
 
     def open_channel(self, address, amount):
