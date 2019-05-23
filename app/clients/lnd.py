@@ -25,7 +25,7 @@ class MacaroonMetadataPlugin(grpc.AuthMetadataPlugin):
 class LndLTC:
 
     def __init__(self):
-        cert = open(TLS_FILEPATH, 'rb')
+        cert = open(TLS_FILEPATH, 'rb').read()
         macaroon = binascii.hexlify(open(MACAROON_FILEPATH, 'rb').read()).decode
 
         cert_creds = grpc.ssl_channel_credentials(cert)
