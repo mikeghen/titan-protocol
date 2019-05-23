@@ -35,7 +35,7 @@ class LndLTC:
         self.channel = grpc.secure_channel(
             'localhost', self._creds, options=[('grpc.max_receive_message_length', 1024*1024*50)]
         )
-        self.lnd_stub = lnrpc.LightningStub(channel)
+        self.lnd_stub = lndrpc.LightningStub(channel)
 
 
     def healthcheck(self):
