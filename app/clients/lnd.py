@@ -11,7 +11,7 @@ for invoice in lnd.subscribe_invoices():
 class Lnd:
 
     def __init__(self):
-        self.client = LNDClient("lnd-ltc:10009", network='mainnet')
+        self.client = LNDClient("localhost:10113", network='mainnet')
 
 
     def healthcheck(self):
