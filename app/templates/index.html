@@ -1,0 +1,90 @@
+<!doctype html>
+<head>
+  <title>Index Fund</title>
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.12.0/jquery.js" datatables=""></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.11/css/jquery.dataTables.min.css">
+  <style>
+    td.color  {
+        color: green;
+    }
+  </style>
+</head>
+<h1><img src="https://emojis.wiki/emoji-pics/microsoft/rocket-microsoft.png" width="50" height="50"></img>
+  Index Fund</h1>
+<h2><img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/mozilla/36/bank_1f3e6.png" width="25" height="25"></img>
+  Fund Balances</h2>
+<table id="balances" class="display" style="width:100%">
+  <thead>
+    <tr>
+      <td>Channel ID</td>
+      <td>Capacity</td>
+      <td>Local Balance</td>
+      <td>Remote Balance</td>
+    </tr>
+  </thead>
+  <tbody>
+  {% for channel in channels %}
+    <tr>
+      <td>{{channel["chan_id"]}}</td>
+      <td>{{channel["capacity"]}}</td>
+      <td>{{channel["local_balance"]}}</td>
+      <td>{{channel["remote_balance"]}}</td>
+    </tr>
+  {% endfor %}
+</tbody>
+<tfoot>
+  <tr>
+    <th >Totals</th>
+    <th style="text-align:left"></th>
+    <th style="text-align:left"></th>
+    <th style="text-align:left"></th>
+  </tr>
+</tfoot>
+</table>
+<script>
+$(document).ready( function () {
+    $('#balances').DataTable({
+      "paging": false,
+      "bFilter": false,
+      "bInfo": false,
+      "searching": false,
+      "info": false,
+      "footerCallback": function ( row, data, start, end, display ) {
+            var api = this.api(), data;
+            total = api
+                .column( 1 )
+                .data()
+                .reduce( function (a, b) {
+                    return parseFloat(a) + parseFloat(b);
+                }, 0 );
+            // Update footer
+            $( api.column( 1 ).footer() ).html(
+                 total + ' satoshis'
+            );
+
+            total = api
+                .column( 2 )
+                .data()
+                .reduce( function (a, b) {
+                    return parseFloat(a) + parseFloat(b);
+                }, 0 );
+            // Update footer
+            $( api.column( 2 ).footer() ).html(
+                 total + ' satoshis'
+            );
+
+            total = api
+                .column( 3 )
+                .data()
+                .reduce( function (a, b) {
+                    return parseFloat(a) + parseFloat(b);
+                }, 0 );
+            // Update footer
+            $( api.column( 3 ).footer() ).html(
+                 total + ' satoshis'
+            );
+        }
+    });
+});
+</script>
