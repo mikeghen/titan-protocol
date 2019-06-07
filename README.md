@@ -9,7 +9,9 @@ Friends Fund works on the idea of that a lightning transaction can be opened, Bi
 ## Friend Finder Diagram
 ![Friend Finder High Level](./docs/images/LND.png)
 
-# Documention
+# Documentation
+## Friend Finder Diagram
+![Friend Finder High Level](./docs/images/LND2.png)
 
 ## Usage
 Running the stack locally:
