@@ -6,12 +6,18 @@ Friend Fund is a framework for _managing securitized synthetic assets_ like exch
 ## Business Description
 Friends Fund works on the idea of that a lightning transaction can be opened, Bitcoin can be _committed_, and Bitcoin can then be transferred in small amounts over a period of time.
 
-## Friend Finder Diagram
-![Friend Finder High Level](./docs/images/LND.png)
+An *investor* opens up a payment channel to an originator's LN node, this is referred to as the *staking channel* as it gives the investor a stake in the the profits of the the originator's securities.
+
+The *originator* opens a payment channel back to the investor, this is referred to as the *profit channel*. The originator can invoice against the channel to cover their fees and expenses. The originator can also invoice against the channels to distribute the profits (or losses) to the investors.
+
+### Friend Fund Overview
+![Friend Fund High Level](./docs/images/LND2.png)
+
+### Friend Fund Cloud Mining Contracts
+Consider four masternodes as a synthetic asset that someone would like to securitize. The owner will then setup a Friend Fund on the Lightning network to safely pass the expenses for power and a fee for services on to the investors. The profits are distributed back to the investors. 
+![Friend Fund High Level](./docs/images/LND.png)
 
 # Documentation
-## Friend Finder Diagram
-![Friend Finder High Level](./docs/images/LND2.png)
 
 ## Usage
 Running the stack locally:
