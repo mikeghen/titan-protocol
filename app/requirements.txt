@@ -1,5 +1,0 @@
-flask
-grpcio==1.20.1
-grpcio-tools
-googleapis-common-protos
-python-dotenv

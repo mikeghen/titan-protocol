@@ -1,0 +1,95 @@
+<!doctype html>
+{% extends "layout.html" %}
+{% block body %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+<div class="ui container">
+  <div class="ui segments">
+    <h4 class="ui top sub attached header">Overview</h4>
+    <div class="ui attached segment">
+      <form method="POST">
+        <div class="ui fluid search selection dropdown">
+          <input type="hidden" name="node-result">
+          <i class="dropdown icon"></i>
+          <div class="default text">Select Node</div>
+          <div class="menu">
+            {% for node in nodes %}
+            <div class="item" data-value="{{ node.pub_key }}"><i class="stop icon" style="color: {{ node.color }}"></i>{{ node.alias }}</div>
+            {% endfor %}
+          </div>
+        </div>
+        <script>$('.ui.dropdown').dropdown();</script>
+        <div class="ui divider"></div>
+        <div class="ui fluid action input">
+          <input type="text" name="amount" placeholder="Enter Amount (in sats)">
+          <button class="ui button" type="submit">Search</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="ui segments">
+    <h4 class="ui top sub attached header">Map</h4>
+    <div class="ui attached segment">
+      <div id="route-path" style="height: 500px;"></div>
+      <script type="text/javascript">
+        var container = document.getElementById('route-path');
+        var data = {{ map_data|safe }};
+        var options = {
+          nodes: {
+            shape: 'dot',
+            borderWidth: 1,
+            borderWidthSelected: 2,
+            scaling: {
+              min: 10,
+              max: 20,
+            },
+          },
+          interaction: {
+            hover: true
+          },
+          physics: {
+            forceAtlas2Based: {
+              gravitationalConstant: -75,
+              springLength: 100,
+              damping: 0.5,
+            },
+            solver: "forceAtlas2Based"
+          },
+        };
+        var network = new vis.Network(container, data, options);
+      </script>
+    </div>
+  </div>
+  {% for route in routes %}
+  <div class="ui segments">
+    <h4 class="ui top sub attached header">Route #{{ loop.index }}</h4>
+    <div class="ui attached segment">
+      <table class="ui compact table">
+        <thead>
+          <tr>
+            <th class="one wide">Hop</th>
+            <th class="five wide">Node</th>
+            <th class="three wide">Channel</th>
+            <th>Capacity</th>
+            <th>Forward (sat)</th>
+            <th>Fee (sat)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for hop in route.hops %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td><i class="stop icon" style="color: {{ hop.node_color }}"></i>{{ hop.node_alias }}</td>
+            <td>{{ hop.chan_id }}</td>
+            <td>{{ hop.chan_capacity|format_thousands_int }}</td>
+            <td>{{ hop.amt_to_forward|format_thousands_float }}</td>
+            <td>{{ hop.fee|format_thousands_float }}</td>
+          </tr>
+        </tbody>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

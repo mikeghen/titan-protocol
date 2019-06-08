@@ -13,8 +13,8 @@ The *originator* opens a payment channel back to the investor, this is referred 
 ### Friend Fund Overview
 ![Friend Fund High Level](./docs/images/LND2.png)
 
-### Friend Fund Cloud Mining Contracts
-Consider four masternodes as a synthetic asset that someone would like to securitize. The owner will then setup a Friend Fund on the Lightning network to safely pass the expenses for power and a fee for services on to the investors. The profits are distributed back to the investors. 
+### Friend Fund Example: Sharenodes
+Consider four masternodes as a synthetic asset that someone would like to securitize. The owner will then setup a Friend Fund on the Lightning network to safely pass the expenses for power and a fee for services on to the investors. The profits are distributed back to the investors.
 ![Friend Fund High Level](./docs/images/LND.png)
 
 # Documentation
