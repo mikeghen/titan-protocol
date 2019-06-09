@@ -1,6 +1,19 @@
 <!doctype html>
 {% extends "layout.html" %}
 {% block body %}
+<form action="/channels" method="post">
+  <div class="form-group">
+    <div>
+    <label>Node Key</label>
+    </div>
+    <input name="node_pubkey" class="form-control"></input>
+    <div>
+    <label>Local Funding Amount (satoshis)</label>
+    </div>
+    <input name="local_funding_amount" class="form-control"></input>
+  </div>
+  <button class="btn btn-primary channel float-right" type="submit" style="width: 5rem">Open Channel</button>
+</form>
 <div class="ui container">
   <div class="ui segments">
     <h4 class="ui top sub attached header">Overview</h4>

@@ -153,9 +153,21 @@ def home():
     return render_template("index.html", **content)
 
 
-@blueprint.route("/channels")
+@blueprint.route("/channels",methods=['POST','GET'])
 @cache.cached(timeout=60)
 def channels():
+    logger.info(str(request.form))
+    if request.method == 'POST':
+        # Open Channel
+        node_pubkey = request.form["node_pubkey"]
+        local_funding_amount = request.form["local_funding_amount"]
+        open_channel_response = stub.OpenChannel(
+            ln.OpenChannelRequest(
+                node_pubkey=node_pubkey,
+                local_funding_amount=local_funding_amount
+            )
+        )
+        logger.info(open_channel_response)
     peers = []
     total_capacity = 0
     total_local_balance = 0
@@ -319,13 +331,14 @@ def channels():
 @blueprint.route("/invoices",methods = ['POST', 'GET'])
 @cache.cached(timeout=60)
 def invoices():
+    logger.info(str(request.form))
+    new_invoice = None
     if request.method == 'POST':
         # originator-lncli addinvoice -amt 100 --memo "Masternode Fees & Expenses"
         memo = request.form['memo']
-        value = request.form['value']
-        invoice_response = stub.AddInvoice(ln.Invoice(value=value, memo=memo))
-        invoice = invoice_response.invoice
-        return json.dumps(protobuf_to_dict(invoice))
+        value = int(request.form['value'])
+        invoice_response = stub.AddInvoice(ln.Invoice(amt=value, memo=memo))
+        new_invoice = invoice_response.invoice
     else:
         invoices = []
         invoices_response = stub.ListInvoices(ln.ListInvoiceRequest())
@@ -340,14 +353,13 @@ def invoices():
                 "amt_paid": invoice.amt_paid
             }
             invoices.append(i)
-        return render_template("invoices.html", invoices=invoices)
+    return render_template("invoices.html", invoices=invoices, new_invoice=new_invoice)
 
 
 @blueprint.route("/payments",methods = ['POST', 'GET'])
 @cache.cached(timeout=60)
 def payments():
     if request.method == 'POST':
-        # originator-lncli addinvoice -amt 100 --memo "Masternode Fees & Expenses"
         payment_hash = request.form['payment_hash']
         payment_response = stub.SendPayment(ln.SendRequest(payment_request=payment_hash))
         logger.info(payment_response)

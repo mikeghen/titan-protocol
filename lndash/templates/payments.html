@@ -1,0 +1,51 @@
+<!doctype html>
+{% extends "layout.html" %}
+{% block body %}
+    <div class="ui container">
+      <div class="ui segments">
+        <div class="ui attached segment">
+          <div class="ui grid">
+            <div class="eight wide column">
+              <!-- TODO: Add an aggregate for all invoices paid -->
+              <!-- TODO: Convert this to a data table -->
+              {% for invoice in invoices %}
+
+              {% endfor %}
+            </div>
+            <div>
+              <table>
+              <h1>Payments</h1>
+              <div>
+                <h3>New Payment</h3>
+                <form action="/payments" method="post">
+                  <div class="form-group">
+                    <div>
+                    <label>Payment Hash</label>
+                    </div>
+                    <textarea name="payment_hash" class="form-control" rows="2" style="width: 20rem"></textarea>
+                  </div>
+                  <button class="btn btn-primary invoice float-right" type="submit" style="width: 5rem">Send</button>
+                </form>
+              </div>
+              {% for payment in payments %}
+              <h2>Monthly savings</h2>
+                <tr>
+                  <th>Creation Date:</th>
+                  <th>Payment Hash:</th>
+                  <th>Amount:</th>
+                  <th>Fee:</th>
+                </tr>
+                <tr>
+                  <td>{{payment["creation_date"]}}</td>
+                  <td>{{payment["payment_hash"]}}</td>
+                  <td>Amount: {{payment["value"]}} sats</td>
+                  <td>Fee: {{payment["fee"]}} sats</td>
+                </tr>
+              {% endfor %}
+            </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}

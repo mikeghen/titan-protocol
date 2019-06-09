@@ -178,7 +178,7 @@ $ originator-lncli payinvoice lnbcrt3u1pw04j4epp5rwpwkzdx7xcrwt7gjldj523w2gk9450
 ![Originator Dashboard](./docs/images/lndash2.png)
 
 
-##  Originator Dashboard (a.k.a lndash)
+##  Originator Dashboard
 We just use the lndash project to be our "originator dashboard."
 
 Follow the instructions to run the LN dashboard and configure it to point to the originators LN node:

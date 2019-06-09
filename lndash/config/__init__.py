@@ -1,6 +1,6 @@
 import os
 
-macaroon_path = "config/readonly.macaroon"
+macaroon_path = "config/admin.macaroon"
 cert_path = "config/tls.cert"
 grpc_max_length = 32 * 1024 * 1024
 
