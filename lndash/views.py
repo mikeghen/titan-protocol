@@ -316,38 +316,55 @@ def channels():
 
     return render_template("channels.html", **content)
 
-@blueprint.route("/invoices")
+@blueprint.route("/invoices",methods = ['POST', 'GET'])
 @cache.cached(timeout=60)
 def invoices():
-    invoices = []
-    payments = []
+    if request.method == 'POST':
+        # originator-lncli addinvoice -amt 100 --memo "Masternode Fees & Expenses"
+        memo = request.form['memo']
+        value = request.form['value']
+        invoice_response = stub.AddInvoice(ln.Invoice(value=value, memo=memo))
+        invoice = invoice_response.invoice
+        return json.dumps(protobuf_to_dict(invoice))
+    else:
+        invoices = []
+        invoices_response = stub.ListInvoices(ln.ListInvoiceRequest())
+        for invoice in invoices_response.invoices:
+            i = {
+                "memo": invoice.memo,
+                "value": invoice.value,
+                "settled": invoice.settled,
+                "creation_date": invoice.creation_date,
+                "settle_date": invoice.settle_date,
+                "payment_request": invoice.payment_request,
+                "amt_paid": invoice.amt_paid
+            }
+            invoices.append(i)
+        return render_template("invoices.html", invoices=invoices)
 
-    # Get Invoices
-    invoices_response = stub.ListInvoices(ln.ListInvoiceRequest())
-    for invoice in invoices_response.invoices:
-        i = {
-            "memo": invoice.memo,
-            "value": invoice.value,
-            "settled": invoice.settled,
-            "creation_date": invoice.creation_date,
-            "settle_date": invoice.settle_date,
-            "payment_request": invoice.payment_request,
-            "amt_paid": invoice.amt_paid
-        }
-        invoices.append(i)
 
-    # Get Payments
-    payments_response = stub.ListPayments(ln.ListPaymentsRequest())
-    for payment in payments_response.payments:
-        p = {
-            "value": payment.value,
-            "payment_hash": payment.payment_hash,
-            "creation_date": payment.creation_date,
-            "fee": payment.fee
-        }
-        payments.append(p)
+@blueprint.route("/payments",methods = ['POST', 'GET'])
+@cache.cached(timeout=60)
+def payments():
+    if request.method == 'POST':
+        # originator-lncli addinvoice -amt 100 --memo "Masternode Fees & Expenses"
+        payment_hash = request.form['payment_hash']
+        payment_response = stub.SendPayment(ln.SendRequest(payment_request=payment_hash))
+        logger.info(payment_response)
+        return json.dumps(protobuf_to_dict(invoice))
+    else:
+        payments = []
+        payments_response = stub.ListPayments(ln.ListPaymentsRequest())
+        for payment in payments_response.payments:
+            p = {
+                "value": payment.value,
+                "payment_hash": payment.payment_hash,
+                "creation_date": payment.creation_date,
+                "fee": payment.fee
+            }
+            payments.append(p)
+        return render_template("payments.html", payments=payments)
 
-    return render_template("invoices.html", payments=payments, invoices=invoices)
 
 @blueprint.route("/events")
 @cache.cached(timeout=60)
