@@ -31,22 +31,23 @@
 
 
               <table>
-              {% for invoice in invoices %}
-              <h4>{{invoice["memo"]}}</h4>
-
                 <tr>
+                  <th>Memo</th>
                   <th>Creation Date</th>
                   <th>Amount</th>
                   <th>Amount Paid</th>
                   <th>Settled</th>
-
+                  <th>Payment Request</th>
                 </tr>
 
+              {% for invoice in invoices %}
                 <tr>
+                  <td>{{invoice["memo"]}}</td>
                   <td>{{invoice["creation_date"]}}</td>
                   <td>{{invoice["value"]}} sats</td>
                   <td>{{invoice["amt_paid"]}} sats</td>
                   <td>{{invoice["settled"]}}</td>
+                  <td>{{invoice["payment_request"]}}</td>
                 </tr>
 
                 </div>
