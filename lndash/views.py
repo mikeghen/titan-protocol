@@ -1,13 +1,19 @@
 import os, grpc, time, datetime, json
-from flask import Blueprint, render_template, request, jsonify
-
+import logging
 import config
 import libs.rpc_pb2 as ln
 import libs.rpc_pb2_grpc as lnrpc
 from cache import cache
+from flask import Blueprint, render_template, request, jsonify
+from google.protobuf.json_format import MessageToJson
 
 blueprint = Blueprint("views", __name__, template_folder="templates")
 
+logger = logging.getLogger('gunicorn.error')
+logger.info('Logging started')
+
+def protobuf_to_dict(protobuf):
+    return json.loads(MessageToJson(protobuf))
 
 def metadata_callback(context, callback):
     callback([("macaroon", macaroon)], None)
@@ -310,6 +316,38 @@ def channels():
 
     return render_template("channels.html", **content)
 
+@blueprint.route("/invoices")
+@cache.cached(timeout=60)
+def invoices():
+    invoices = []
+    payments = []
+
+    # Get Invoices
+    invoices_response = stub.ListInvoices(ln.ListInvoiceRequest())
+    for invoice in invoices_response.invoices:
+        i = {
+            "memo": invoice.memo,
+            "value": invoice.value,
+            "settled": invoice.settled,
+            "creation_date": invoice.creation_date,
+            "settle_date": invoice.settle_date,
+            "payment_request": invoice.payment_request,
+            "amt_paid": invoice.amt_paid
+        }
+        invoices.append(i)
+
+    # Get Payments
+    payments_response = stub.ListPayments(ln.ListPaymentsRequest())
+    for payment in payments_response.payments:
+        p = {
+            "value": payment.value,
+            "payment_hash": payment.payment_hash,
+            "creation_date": payment.creation_date,
+            "fee": payment.fee
+        }
+        payments.append(p)
+
+    return render_template("invoices.html", payments=payments, invoices=invoices)
 
 @blueprint.route("/events")
 @cache.cached(timeout=60)

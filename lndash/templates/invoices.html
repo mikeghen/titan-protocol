@@ -1,0 +1,44 @@
+<!doctype html>
+{% extends "layout.html" %}
+{% block body %}
+    <div class="ui container">
+      <div class="ui segments">
+        <div class="ui attached segment">
+          <div class="ui grid">
+            <div class="eight wide column">
+              <h1>Invoices</h1>
+              <!-- TODO: Add an aggregate for all invoices paid -->
+              <!-- TODO: Convert this to a data table -->
+              {% for invoice in invoices %}
+                <div class="card invoice-recent" style="width: 55rem;">
+                    <div class="card-body">
+                        <h4 class="card-title">{{invoice["memo"]}}</h4>
+                        <p>{{invoice["creation_date"]}}</p>
+                        <p class="card-text">Amount: {{invoice["value"]}} sats</p>
+                        <p class="card-text">Amount Paid: {{invoice["amt_paid"]}} sats</p>
+                        <p class="card-text">Settled: {{invoice["settled"]}}</p>
+                        <button class="btn btn-primary float-right invoice" type="submit" >View</button>
+                    </div>
+                </div>
+              {% endfor %}
+            </div>
+            <div class="eight wide column">
+              <h1>Payments</h1>
+              {% for payment in payments %}
+                <div class="card invoice-recent" style="width: 55rem;">
+                    <div class="card-body">
+                        <p class=".text-muted">{{payment["creation_date"]}}</p>
+                        <h4 class="card-title">{{payment["payment_hash"]}}</h4>
+                        <p class="card-text">Amount: {{payment["value"]}} sats</p>
+                        <p class="card-text">Fee: {{payment["fee"]}} sats</p>
+                        <button class="btn btn-primary float-right invoice" type="submit" >View</button>
+                    </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+{% endblock %}
