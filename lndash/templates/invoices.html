@@ -1,61 +1,122 @@
 <!doctype html>
-{% extends "layout.html" %}
-{% block body %}
+<head>
+  <title>Profit Channels | Originator Dashboard</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" type="image/png" href="/static/favicon.png"/>
+  <link rel="stylesheet" type="text/css" href="/static/semantic.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+  <script
+    src="https://code.jquery.com/jquery-3.1.1.min.js"
+    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+    crossorigin="anonymous">
+  </script>
+  <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="/static/semantic.min.js"></script>
+  <script src="/static/qrcode.min.js"></script>
+  <style type="text/css">
+    body {
+      background-color: #FFFFFF;
+    }
+    .ui.menu .item img.logo {
+      margin-right: 1.5em;
+    }
+    .main.container {
+      margin-top: 5em;
+    }
+    .wireframe {
+      margin-top: 2em;
+    }
+    .ui.footer.segment {
+      margin: 5em 0em 0em;
+      padding: 5em 0em;
+    }
+    [data-tooltip]:after {
+      width: 350px;
+      white-space: normal;
+    }
+  </style>
+</head>
+<body>
+  <div class="ui fixed inverted menu">
     <div class="ui container">
-      <div class="ui segments">
-        <div class="ui attached segment">
-          <div class="ui grid">
-            <div>
-              <h1>Invoices</h1>
+      <div class="header item">Originator Dashboard</div>
+      <a href="/" class="item">Home</a>
+      <a href="channels" class="item">Channels</a>
+      <a href="invoices" class="item">Invoices</a>
+      <a href="payments" class="item">Payments</a>
+      <a href="events" class="item">Events</a>
+      <a href="query" class="item">Query</a>
+      <a href="map" class="item">Map</a>
+    </div>
+  </div>
+  <div class="ui main container">
+  {% block body %}
+  {% endblock %}
+  <div class="ui container">
+        <div class="ui segments">
+          <div class="ui attached segment">
+            <div class="ui grid">
               <div>
-                <h3>New Invoice</h3>
-                <form action="/invoices" method="post">
-                  <div class="form-group">
-                    <div>
-                    <label>Memo</label>
+                <h1>Invoices</h1>
+                <div>
+                  <h3>New Invoice</h3>
+                  <form action="/invoices" method="post">
+                    <div class="form-group">
+                      <div>
+                      <label>Memo</label>
+                      </div>
+                      <textarea name="memo" class="form-control" rows="2" style="width: 16rem"></textarea>
                     </div>
-                    <textarea name="memo" class="form-control" rows="2" style="width: 20rem"></textarea>
-                  </div>
-                  <div class="form-group">
-                    <div>
-                    <label>Amount</label>
+                    <div class="form-group">
+                      <div>
+                      <label>Amount</label>
+                      </div>
+                      <input name="value" type="text" class="form-control" placeholder="$" style="width: 10rem">
                     </div>
-                    <input name="value" type="text" class="form-control" placeholder="$" style="width: 20rem">
-                  </div>
-                  <button class="btn btn-primary invoice float-right" type="submit" style="width: 5rem">Send</button>
-                </form>
-              </div>
-
-
-
-
-
-              <table>
-                <tr>
-                  <th>Memo</th>
-                  <th>Creation Date</th>
-                  <th>Amount</th>
-                  <th>Amount Paid</th>
-                  <th>Settled</th>
-                  <th>Payment Request</th>
-                </tr>
-
-              {% for invoice in invoices %}
-                <tr>
-                  <td>{{invoice["memo"]}}</td>
-                  <td>{{invoice["creation_date"]}}</td>
-                  <td>{{invoice["value"]}} sats</td>
-                  <td>{{invoice["amt_paid"]}} sats</td>
-                  <td>{{invoice["settled"]}}</td>
-                  <td>{{invoice["payment_request"]}}</td>
-                </tr>
-
+                    <button class="btn btn-primary invoice float-right" type="submit" style="width: 5rem">Send</button>
+                  </form>
                 </div>
-              {% endfor %}
-
+  
+                <table id="invoice" class="display" style="width:80%">
+  
+                  <tr>
+                    <th>Memo</th>
+                    <th>Creation Date</th>
+                    <th>Amount</th>
+                    <th>Amount Paid</th>
+                    <th>Settled</th>
+                    <th>Payment Request</th>
+                  </tr>
+  
+                {% for invoice in invoices %}
+                  <tr>
+                    <td>{{invoice["memo"]}}</td>
+                    <td>{{invoice["creation_date"]}}</td>
+                    <td>{{invoice["value"]}} sats</td>
+                    <td>{{invoice["amt_paid"]}} sats</td>
+                    <td>{{invoice["settled"]}}</td>
+                    <td>{{invoice["payment_request"]}}</td>
+                  </tr>
+  
+                  </div>
+  
+                  <script>
+                    $(document).ready(function() {
+                    $('#invoice').DataTable();
+                    } );
+                  </script>
+                
+                {% endfor %}
+                </table>
+                </div>
+  
+              </div>
             </div>
           </div>
         </div>
-      </div>
-
-{% endblock %}
+  
+  {% endblock %}
+  </div>
+</body>
